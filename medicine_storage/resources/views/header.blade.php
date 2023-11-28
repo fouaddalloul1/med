@@ -27,8 +27,8 @@
             <a href="/medicines" class="brand-logo brand-text">Medicine Storage</a>
             <ul id="nav-moblie" class="right hide-on-small-and-down">
                 <a href="medicines/create" class="btn brand z-depth-0 center">Add a Product</a>
-                <a href="companies" class="btn brand z-depth-0 center">com</a>
-                <a href="categories" class="btn brand z-depth-0 center">cat</a>
+                <a href="http://127.0.0.1:8000/companies" class="btn brand z-depth-0 center">com</a>
+                <a href="http://127.0.0.1:8000/categories" class="btn brand z-depth-0 center">cat</a>
             </ul>
         </div>
 
