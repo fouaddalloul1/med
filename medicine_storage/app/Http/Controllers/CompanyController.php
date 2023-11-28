@@ -3,17 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-// to turn on DB ( query builder )
 use Illuminate\Support\Facades\DB;
 
-class MyMedicineController extends Controller
+class CompanyController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view("home");
+        return view("addCompany");
     }
 
     /**
@@ -21,8 +20,7 @@ class MyMedicineController extends Controller
      */
     public function create()
     {
-        return view("addProduct");
-        
+        return view("addCompany");
     }
 
     /**
@@ -30,14 +28,8 @@ class MyMedicineController extends Controller
      */
     public function store(Request $request)
     {
-        DB::table('medicines')->insert([
-            "sentific" => $request->sentific,
-            "trade" => $request->trade,
-            "quantity" => $request->quantity,
-            "sentific" => $request->sentific,
-            "price" => $request->price,
-            "company_id" => $request->company_id,
-            "category_id" => $request->category_id
+        DB::table('companies')->insert([
+            "name"=>$request->name
         ]);
     }
 
