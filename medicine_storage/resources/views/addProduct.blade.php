@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\DB;
 
 $companies = DB::table('companies')->get();
@@ -33,13 +34,13 @@ $com_id = DB::table('companies')->where('name', "wissam")->get();
             <br> <br>
             <input type="number" required min="1" max="{{$cat_count}}" name="category_id" value="1" placeholder="Enter category_id" style="width: 190px;">
             <br> <br> -->
-            <select required name="company_name" Size="Number_of_options">
+            <select required name="company_name" Size="Number_of_options" class="card z-depth-0 ">
                 @foreach($companies as $company)
                 <option> {{$company->name}}</option>
                 @endforeach
             </select>
             <br> <br>
-            <select required name="category_name" Size="Number_of_options">
+            <select required name="category_name" Size="Number_of_options" class="card z-depth-0 ">
                 @foreach($categories as $category)
                 <option> {{$category->name}}</option>
                 @endforeach
