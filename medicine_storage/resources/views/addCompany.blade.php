@@ -9,6 +9,8 @@
 </head>
 
 <body>
+<?php include('E:\laravel\medicine_storage\resources\views\header.blade.php') ?>
+
     <div style="margin: 70px 50px; background:gray;">
         <form action="{{route('companies.store')}}" method="post" style="padding: 100px 100px;">
 
@@ -23,6 +25,7 @@
         </form>
     </div>
 
+    <?php include('E:\laravel\medicine_storage\resources\views\footer.php') ?>
 
 </body>
 

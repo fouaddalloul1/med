@@ -7,8 +7,10 @@
     <title>ducument</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
+<?php include('E:\laravel\medicine_storage\resources\views\header.blade.php') ?>
 
 <body>
+
     <div style="margin: 70px 50px; background:gray;">
         <form action="{{route('categories.store')}}" method="post" style="padding: 100px 100px;">
 
@@ -23,6 +25,7 @@
         </form>
     </div>
 
+<?php include('E:\laravel\medicine_storage\resources\views\footer.php') ?>
 
 </body>
 

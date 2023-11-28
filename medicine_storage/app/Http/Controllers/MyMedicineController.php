@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 // to turn on DB ( query builder )
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Stmt\Goto_;
 
 class MyMedicineController extends Controller
 {
@@ -22,7 +23,7 @@ class MyMedicineController extends Controller
     public function create()
     {
         return view("addProduct");
-        
+
     }
 
     /**
@@ -30,15 +31,17 @@ class MyMedicineController extends Controller
      */
     public function store(Request $request)
     {
+        $com_id = DB::table('companies')->where('name',$request->company_name,)->get();
+        $cat_id = DB::table('category')->where('name',$request->category_name)->get();
         DB::table('medicines')->insert([
             "sentific" => $request->sentific,
             "trade" => $request->trade,
             "quantity" => $request->quantity,
-            "sentific" => $request->sentific,
             "price" => $request->price,
-            "company_id" => $request->company_id,
-            "category_id" => $request->category_id
+            "company_id" =>$com_id[0]->id,
+            "category_id" => $cat_id[0]->id
         ]);
+        return redirect('/medicines');
     }
 
     /**
@@ -46,7 +49,7 @@ class MyMedicineController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return "foaud dalloul";
     }
 
     /**
