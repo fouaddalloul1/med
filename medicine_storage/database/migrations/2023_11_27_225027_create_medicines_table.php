@@ -13,12 +13,18 @@ return new class extends Migration
     {
         Schema::create('medicines', function (Blueprint $table) {
             $table->id();
-            $table->string("sentific");
-            $table->string("trade");
+            //names
+            $table->string("scientific_en");
+            $table->string("scientific_ar");
+            $table->string("trade_en");
+            $table->string("trade_ar");
+            $table->string('image');
             $table->bigInteger("quantity");
             $table->float("price");
+            $table->string("endDate");
+            //if delete or update company or category the same thing will be medicine
             $table->foreignId("company_id")->references("id")->on('companies')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignId("category_id")->constrained("category","id")->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId("category_id")->constrained("categories","id")->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }
