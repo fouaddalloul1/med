@@ -20,20 +20,16 @@ Route::group(['middleware'=>['userIsGuest']],function(){
     // and I will send data to front-end,so I use post
 
     Route::post('registration',[SendDataFromDB::class,'showHome']);
-
-    Route::post('login',[SendDataFromDB::class,'showHome']);
-
-
-
 });
 
-Route::group(['middleware'=>['userIsAuth']],function(){
+Route::group(['middleware'=>['userIsAuth','checkLanguage']],function(){
 
+    Route::post('login',[SendDataFromDB::class,'showHome']);
     Route::get('homeOfUser',[SendDataFromDB::class,'showHome']);
-    Route::get('homeOfUser/{setting}',[SendDataFromDB::class,'showHome']);
+    Route::get('homeOfUser/setting',[SendDataFromDB::class,'showSetting']);
     Route::get('orders',[SendDataFromDB::class,'showOrders']);
     Route::get('shop',[SendDataFromDB::class,'showShop']);
-    Route::get('shop/{nameOfCategory}',[SendDataFromDB::class,'showMedicinesInThisCategory']);
+    Route::get('shop/nameOfCategory',[SendDataFromDB::class,'showMedicinesInThisCategory','showMedicinesInThisCategory']);
 
 });
 

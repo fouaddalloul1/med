@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\CheckLanguage;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -64,7 +65,10 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+
         'userIsGuest' =>\App\Http\Middleware\UserIsGuest::class,
-        'userIsAuth' =>\App\Http\Middleware\UserIsGuest::class,
+        'userIsAuth' =>\App\Http\Middleware\UserIsAuth::class,
+        'checkLanguage'=>\App\Http\Middleware\CheckLanguage::class,
+
     ];
 }

@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Medicine extends Model
+class LinkMedicineWithOrders extends Model
 {
     use HasFactory;
-    protected $table = 'medicines';
+    protected $table = 'link_medicine_with_orders';
 }
