@@ -18,22 +18,22 @@ return new class extends Migration
             $table->string("scientific_ar");
             $table->string("trade_en");
             $table->string("trade_ar");
-            $table->string('image');
+            $table->string('image')->default("image");
             $table->bigInteger("quantity");
             $table->float("price");
-            $table->string("endDate");
+            $table->string("endDate","2025")->default("2025");
             //if delete or update company or category the same thing will be medicine
             $table->foreignId("company_id")->references("id")->on('companies')->cascadeOnDelete()->cascadeOnUpdate();
             $table->unsignedBigInteger("category_id")->references("id")->on('categories')->cascadeOnDelete()->cascadeOnUpdate();
             //the next two lines not work
             //the next error shows :
-//General error: 1005 Can't create table `medicines`.`medicines`
-// (errno: 150 "Foreign key constraint is incorrectly formed") (Connection: mysql,
-// SQL: alter table `medicines` add constraint `medicines_category_id_foreign`
-// foreign key (`category_id`) references `categories` (`id`) on delete cascade on update
-//cascade
-//            $table->foreignId("category_id")->references("id")->on('categories')->cascadeOnDelete()->cascadeOnUpdate();
-//            $table->foreignId("category_id")->constrained("categories","id")->cascadeOnDelete()->cascadeOnUpdate();
+            //General error: 1005 Can't create table `medicines`.`medicines`
+            // (errno: 150 "Foreign key constraint is incorrectly formed") (Connection: mysql,
+            // SQL: alter table `medicines` add constraint `medicines_category_id_foreign`
+            // foreign key (`category_id`) references `categories` (`id`) on delete cascade on update
+            //cascade
+            //            $table->foreignId("category_id")->references("id")->on('categories')->cascadeOnDelete()->cascadeOnUpdate();
+            //            $table->foreignId("category_id")->constrained("categories","id")->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }

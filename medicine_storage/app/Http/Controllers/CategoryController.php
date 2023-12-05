@@ -22,7 +22,7 @@ return view("addCategory");
     public function create()
     {
 return view("addCategory");
-        
+
     }
 
     /**
@@ -30,9 +30,12 @@ return view("addCategory");
      */
     public function store(Request $request)
     {
-        DB::table('category')->insert([
-            "name"=>$request->name
+        DB::table('categories')->insert([
+            "name_en"=>$request->name_en,
+            "name_ar"=>$request->name_ar
         ]);
+        return redirect()->route('medicines.index');
+
     }
 
     /**

@@ -15,9 +15,12 @@
         <form action="{{route('categories.store')}}" method="post" style="padding: 100px 100px;">
 
             @csrf
-            <input type="text" value="" name="name" placeholder="Enter category name">
+            <input type="text" value="" name="name_en" placeholder="Enter category name_en">
             <br> <br>
-
+            <input type="text" value="" name="name_ar" placeholder="Enter category name_ar">
+            <br> <br>
+            <input type="text" value="" name="image" placeholder="Enter image">
+            <br> <br>
             <button type="submit">submit</button>
 
             <!-- <input type="hidden" name="_token" value="{{ csrf_token() }}"> -->

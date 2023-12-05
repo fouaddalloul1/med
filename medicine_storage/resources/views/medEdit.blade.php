@@ -6,7 +6,6 @@ $companies = DB::table('companies')->get();
 $com_count = count($companies);
 $categories = DB::table("categories")->get();
 $cat_count = count($categories);
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,27 +16,27 @@ $cat_count = count($categories);
 <body>
 
 
-    <div style="margin: 70px 50px; background:gray;">
-        <form action="{{route('medicines.store')}}" method="post" style="padding: 100px 100px;">
-
+    <h2 class="text-center brand-logo brand-text"">Edit Post : {{$med->trade_en}}</h2>
+    <div style=" margin: 70px 50px; background:gray;">
+        <form action="{{route('medicines.update',$med->id)}}" method="post" style="padding: 100px 100px;">
             @csrf
-            <input type="text" required value="" name="scientific_en" placeholder="Enter scientific_en">
+            @method('PUT')
+            <input type="text" required value="{{$med->scientific_en}}" name="scientific_en" placeholder="Enter scientific_en">
             <br> <br>
-            <input type="text" required value="" name="scientific_ar" placeholder="Enter scientific_ar">
+            <input type="text" required value="{{$med->scientific_ar}}" name="scientific_ar" placeholder="Enter scientific_ar">
             <br> <br>
-            <input type="text" required value="" name="trade_en" placeholder="Enter trade_en">
+            <input type="text" required value="{{$med->trade_en}}" name="trade_en" placeholder="Enter trade_en">
             <br> <br>
-            <input type="text" required value="" name="trade_ar" placeholder="Enter trade_er">
+            <input type="text" required value="{{$med->trade_ar}}" name="trade_ar" placeholder="Enter trade_ar">
             <br> <br>
-            <input type="number" required value="" name="quantity" placeholder="Enter quantity">
+            <input type="number" required value="{{$med->quantity}}" name="quantity" placeholder="Enter quantity">
             <br> <br>
-            <input type="number" required value="" name="price" placeholder="Enter price">
+            <input type="number" required value="{{$med->price}}" name="price" placeholder="Enter price">
             <br> <br>
-            <input type="text"  value="" name="endDate" placeholder="Enter endDate">
+            <input type="text"  value="{{$med->endDate}}" name="endDate" placeholder="Enter endDate">
             <br> <br>
-            <input type="text"  value="" name="image" placeholder="Enter image">
+            <input type="text"  value="{{$med->image}}" name="image" placeholder="Enter image">
             <br> <br>
-
             <select required name="company_name_en" Size="Number_of_options" class="card z-depth-0 ">
                 @foreach($companies as $company)
                 <option> {{$company->name_en}}</option>
@@ -54,9 +53,9 @@ $cat_count = count($categories);
 
 
         </form>
-    </div>
+        </div>
 
-    <?php include('E:\laravel\medicine_storage\resources\views\footer.php') ?>
+        <?php include('E:\laravel\medicine_storage\resources\views\footer.php') ?>
 
 </body>
 
