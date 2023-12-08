@@ -9,15 +9,16 @@
 </head>
 
 <body>
-<?php include('E:\laravel\medicine_storage\resources\views\header.blade.php') ?>
+    <?php include('E:\laravel\medicine_storage\resources\views\header.blade.php') ?>
 
     <div style="margin: 70px 50px; background:gray;">
         <form action="{{route('companies.store')}}" method="post" style="padding: 100px 100px;">
 
             @csrf
-            <input type="text" value="" name="name" placeholder="Enter company name">
+            <input type="text" value="" name="name_en" placeholder="Enter company name_en">
             <br> <br>
-
+            <input type="text" value="" name="name_ar" placeholder="Enter company name_ar">
+            <br> <br>
             <button type="submit">submit</button>
 
             <!-- <input type="hidden" name="_token" value="{{ csrf_token() }}"> -->
