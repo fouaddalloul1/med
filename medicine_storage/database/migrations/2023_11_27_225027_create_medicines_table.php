@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string("scientific_ar");
             $table->string("trade_en");
             $table->string("trade_ar");
-            $table->string('image');
+            $table->string('image')->default('null');
             $table->bigInteger("quantity");
             $table->float("price");
             $table->string("endDate");

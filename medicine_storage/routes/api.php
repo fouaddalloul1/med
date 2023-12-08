@@ -22,19 +22,23 @@ Route::group(['middleware'=>['userIsGuest']],function(){
     Route::post('registration',[SendDataFromDB::class,'showHome']);
 });
 
-Route::group(['middleware'=>['userIsAuth','checkLanguage']],function(){
+
+    Route::group(['middleware'=>['userIsAuth','checkLanguage']],function(){
+//Route::group(['middleware'=>['auth','checkLanguage']],function(){
 
     Route::post('login',[SendDataFromDB::class,'showHome']);
-    Route::get('homeOfUser',[SendDataFromDB::class,'showHome']);
-    Route::get('homeOfUser/setting',[SendDataFromDB::class,'showSetting']);
-    Route::get('orders',[SendDataFromDB::class,'showOrders']);
-    Route::get('shop',[SendDataFromDB::class,'showShop']);
-    Route::get('shop/nameOfCategory',[SendDataFromDB::class,'showMedicinesInThisCategory','showMedicinesInThisCategory']);
 
+    Route::get('homeOfUser',[SendDataFromDB::class,'showHome']);
+    Route::get('homeOfUser/setting/{idOfUser}',[SendDataFromDB::class,'showSetting']);
+
+    //additional things
+//    Route::post('homeOfUser/setting/changePassword',)
+
+    Route::get('orders/{idOfUser}',[SendDataFromDB::class,'showOrders']);
+    Route::get('shop',[SendDataFromDB::class,'showShop']);
+    Route::get('shop/{nameOfCategory}',[SendDataFromDB::class,'showMedicinesInThisCategory']);
+        // shop/hearts
+
+    Route::post('addToFavourite/{idOfUser}/{idMedicine}',[SendDataFromDB::class,'addToFavourite']);
 });
 
-
-//
-//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//    return $request->user();
-//});

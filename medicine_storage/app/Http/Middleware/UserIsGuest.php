@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +23,6 @@ class UserIsGuest
         if($request->input('email') == null || $request->input('phone') == null
             || $request->input('name') == null || $request->input('password') == null){
 
-
             echo  $request->input('email') . " ,". $request->input('phone') .
                 " ," .$request->input('password'). " , ". $request->input('name');
 
@@ -33,6 +33,7 @@ class UserIsGuest
 //            " ," .$request->input('password'). " , ". $request->input('name');
 
         $emailOfuser = User::where('email', $request->input('email'))->first();
+
         if($emailOfuser == null || !isset($emailOfuser)){
             // not found email in users table(this user is new)
 
@@ -66,6 +67,33 @@ class UserIsGuest
             $user->password = $dataOfuser['password'];
             $user->save();
 
+            if(Auth::attempt($dataOfuser)){
+                echo "is authenticated";
+//#################################################################################################
+
+                $token = $user->createToken('TokenName')->accessToken;
+
+                // set request headers
+                $request->headers->set('token', 'Bearer ' . $token);
+
+                // authenticate user using token
+                $user = auth()->user();
+//
+//                // get user ID
+                $userId = $user->id;
+//                echo "user id :" . $userId;
+                // use user ID as needed
+
+                $request->merge(['idUser'=>$userId]);
+
+                $request->merge(['token' => $token]);
+
+//      ###################################################################################
+                return $next($request);
+            }
+            else{
+                echo " still not authenticated";
+            }
            // User::create($dataOfuser);  this way will give me error
 //            $user = User::create([
 //                'name' => $request->input('name'),
@@ -73,8 +101,11 @@ class UserIsGuest
 //                'phone' => $request->input('phone'),
 //                'password' => Hash::make($request->input('password'))
 //            ]);
+
+//            return \response()->json([$dataOfuser]);
             return $next($request);
         }
+
 
         return response()->json(['message'=> 'this email is existed,please login instead of  register']);
 
