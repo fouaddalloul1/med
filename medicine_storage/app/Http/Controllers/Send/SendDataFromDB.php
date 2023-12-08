@@ -210,7 +210,9 @@ class SendDataFromDB extends Controller
     }
 
     //complete
-    public function cart(){}
+    public function cart(Request $request){
+
+    }
 
 
 

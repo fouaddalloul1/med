@@ -28,16 +28,21 @@ Route::group(['middleware'=>['userIsGuest']],function(){
 
     Route::post('login',[SendDataFromDB::class,'showHome']);
 
+    //inside home
     Route::get('homeOfUser',[SendDataFromDB::class,'showHome']);
     Route::get('homeOfUser/setting/{idOfUser}',[SendDataFromDB::class,'showSetting']);
+    Route::get('homeOfUser/setting/logout',[SendDataFromDB::class,'logout']);
 
     //additional things
 //    Route::post('homeOfUser/setting/changePassword',)
 
+    //inside orders
     Route::get('orders/{idOfUser}',[SendDataFromDB::class,'showOrders']);
+
+    //inside shop
     Route::get('shop',[SendDataFromDB::class,'showShop']);
     Route::get('shop/{nameOfCategory}',[SendDataFromDB::class,'showMedicinesInThisCategory']);
-        // shop/hearts
+    Route::get('shop/{nameOfCategory}/{nameOfMedicine}',[SendDataFromDB::class,'detailsSpecificMedicine']);
 
     Route::post('addToFavourite/{idOfUser}/{idMedicine}',[SendDataFromDB::class,'addToFavourite']);
 });
