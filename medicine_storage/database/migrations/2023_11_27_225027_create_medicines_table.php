@@ -18,14 +18,11 @@ return new class extends Migration
             $table->string("scientific_ar");
             $table->string("trade_en");
             $table->string("trade_ar");
-<<<<<<< HEAD
-            $table->string('image')->default('null');
-=======
+//            $table->string('image')->default('null');
             $table->string('image')->default("image");
->>>>>>> 1adfb37d43df5552c4954f85c3d21c655d7ce607
             $table->bigInteger("quantity");
             $table->float("price");
-            $table->string("endDate","2025")->default("2025");
+            $table->string("endDate",4)->default("2025");
             //if delete or update company or category the same thing will be medicine
             $table->foreignId("company_id")->references("id")->on('companies')->cascadeOnDelete()->cascadeOnUpdate();
             $table->unsignedBigInteger("category_id")->references("id")->on('categories')->cascadeOnDelete()->cascadeOnUpdate();

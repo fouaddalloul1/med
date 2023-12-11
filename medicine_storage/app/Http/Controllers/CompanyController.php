@@ -29,8 +29,8 @@ class CompanyController extends Controller
     public function store(Request $request)
     {
         DB::table('companies')->insert([
-            "name_en"=>$request->name_en,
-            "name_ar" =>$request->name_ar
+            "name_en" => $request->name_en,
+            "name_ar" => $request->name_ar
         ]);
         return redirect()->route('medicines.index');
 

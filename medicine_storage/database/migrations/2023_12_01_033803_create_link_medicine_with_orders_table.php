@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('link_medicine_with_orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("medicine_id")->references("id")->on('medicines')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId("order_id")->references("id")->on('orders')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId("medicine_id")->references("id")->on('medicines')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('quantityOfThisMedicine');
             //price of one piece from this medicine
             $table->string('singlePrice');

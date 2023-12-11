@@ -18,7 +18,8 @@ class UserIsAuth
      */
     public function handle(Request $request, Closure $next): Response
     {
-        //#################################################
+//##########################################################################
+
         //if they(front) send token in header with to me
         if($request->hasHeader('token')){
             $request = Request::capture();
@@ -39,7 +40,7 @@ class UserIsAuth
             return $next($request);
         }
 
-        //###########################################################################
+//###########################################################################
 
         $enter = false;
         //check if enter phone or email

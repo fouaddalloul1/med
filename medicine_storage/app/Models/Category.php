@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     use HasFactory;
+
+    public function medicines(){
+        $this->hasMany(Medicine::class,'category_id','id');
+    }
+
 }
+
+
+//$c=Category::where($cte_id)
+//$c->medicines()->get();

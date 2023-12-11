@@ -7,5 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Company extends Model
 {
+   // protected $guarded = [];
     use HasFactory;
+
+    public function medicines(){
+        $this->hasMany(Medicine::class,'company_id','id');
+    }
+
 }
