@@ -16,7 +16,7 @@ class CheckLanguage
     public function handle(Request $request, Closure $next): Response
     {
         app()->setLocale('ar');
-        if(isset($request -> lang) && $request -> lang == 'en'){
+        if(isset($request -> lang) && $request -> input('lang') == 'en'){
             app()->setLocale('en');
         }
         return $next($request);

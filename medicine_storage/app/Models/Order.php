@@ -11,18 +11,19 @@ class Order extends Model
     protected $table = 'orders';
 
 
-    public function medicines()
-    {
-        //many-to-many
-        return $this->belongsToMany(Medicine::class)
-            ->withPivot('quantityOfThisMedicine', 'singlePrice', 'totalPrice');
-    }
-
-//
-//    //one-to-many
-//    public function medicines(){
-//        $this->hasMany(LinkMedicineWithOrders::class,'medicine_id','id');
+//    public function medicines()
+//    {
+//        //many-to-many
+//        return $this->belongsToMany(Medicine::class,'link_medicines_with_orders')
+//            ->withPivot('quantityOfThisMedicine', 'singlePrice', 'totalPrice');
 //    }
+
+
+    //one-to-many
+    public function medicines(){
+       return $this->hasMany(LinkMedicinesWithOrders::class,'medicine_id','id')
+           ->with('medicine');
+    }
 
     //many-to-one
     public function user()

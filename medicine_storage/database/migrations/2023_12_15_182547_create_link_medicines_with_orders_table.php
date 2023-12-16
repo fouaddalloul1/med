@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('link_medicine_with_orders', function (Blueprint $table) {
+        Schema::create('link_medicines_with_orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId("order_id")->references("id")->on('orders')->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId("medicine_id")->references("id")->on('medicines')->cascadeOnDelete()->cascadeOnUpdate();
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('link_medicine_with_orders');
+        Schema::dropIfExists('link_medicines_with_orders');
     }
 };

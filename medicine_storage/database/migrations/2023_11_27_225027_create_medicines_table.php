@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Category;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,14 +20,14 @@ return new class extends Migration
             $table->string("trade_en");
             $table->string("trade_ar");
 //            $table->string('image')->default('null');
-            $table->string('image')->default("image");
+            $table->string('image')->default("NULL");
             $table->bigInteger("quantity");
             $table->float("price");
             $table->string("endDate",4)->default("2025");
             //if delete or update company or category the same thing will be medicine
             $table->foreignId("company_id")->references("id")->on('companies')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->unsignedBigInteger("category_id")->references("id")->on('categories')->cascadeOnDelete()->cascadeOnUpdate();
-            //the next two lines not work
+            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
+//            $table->foreignId("category_id")->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             //the next error shows :
             //General error: 1005 Can't create table `medicines`.`medicines`
             // (errno: 150 "Foreign key constraint is incorrectly formed") (Connection: mysql,

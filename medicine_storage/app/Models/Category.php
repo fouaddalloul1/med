@@ -10,7 +10,7 @@ class Category extends Model
     use HasFactory;
 
     public function medicines(){
-        $this->hasMany(Medicine::class,'category_id','id');
+        return $this->hasMany(Medicine::class,'category_id','id');
     }
 
 }

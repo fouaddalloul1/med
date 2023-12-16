@@ -22,9 +22,14 @@ class Medicine extends Model
     }
 
     //many-to-many
+//    public function orders()
+//    {
+//        return $this->belongsToMany(Order::class)
+//            ->withPivot('quantityOfThisMedicine', 'singlePrice', 'totalPrice');
+//    }
     public function orders()
     {
-        return $this->belongsToMany(Order::class)
+        return $this->belongsToMany(Order::class, 'link_medicines_with_orders')
             ->withPivot('quantityOfThisMedicine', 'singlePrice', 'totalPrice');
     }
 

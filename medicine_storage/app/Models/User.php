@@ -49,11 +49,11 @@ class User extends Authenticatable
 //    }
 
     public function orders(){
-        $this->hasMany(Order::class,'users_id','id');
+        return $this->hasMany(Order::class,'users_id','id');
     }
 
-    public function favMedicines(){
-        $this->hasMany(LinkFavMedicine::class,'user_id','id');
+    public function medicines(){
+        return $this->hasMany(LinkFavMedicine::class,'user_id','id');
     }
 
 }

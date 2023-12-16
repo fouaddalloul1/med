@@ -1,0 +1,16 @@
+orders : $data = [
+    'medicines' => [
+        [
+            'name' => 'Aspirin',
+            'quantity' => 2,
+            'singlePrice' => 5.99,
+            'totalPrice' => 11.98,
+        ],
+        [
+            'name' => 'Ibuprofen',
+            'quantity' => 1,
+            'singlePrice' => 7.99,
+            'totalPrice' => 7.99,
+        ],
+    ],
+];

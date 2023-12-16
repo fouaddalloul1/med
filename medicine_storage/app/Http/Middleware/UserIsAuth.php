@@ -86,30 +86,37 @@ class UserIsAuth
 
         if ($currentUser && Hash::check($request->input('password'), $currentUser->password)) {
             // The email or phone and password belong to the same user.
-            $dataOfuser = $request->all();
+//            $dataOfuser = $request->except(['lang']);
+
+            $var = $request->input('email');
+            if(!$var)
+                $var = $request->input('phone');
+            $password = $request->input('password');
+            $dataOfuser = ['email' => $var, 'password' => $password];
             if (Auth::attempt($dataOfuser)) {
                 echo "is authenticated";
 //#################################################################################################
 
                 $token = $currentUser->createToken('Token_name')->accessToken;
-
+//                echo "token : ".$token;
+                echo "\n";
                 // set request headers
                 $request->headers->set('token', 'Bearer ' . $token);
 
-                // authenticate user using token
+//                 authenticate user using token
                 $currentUser = auth()->user();
 //
                 // get user ID
                 $userId = $currentUser->id;
-                echo "user id :" . $userId;
+//                echo "user id :" . $userId;
 
-
-                $request->merge(['token' => $token]);
+//                echo "header of request : ". $request->header('token');
+//                echo "\n";
+//                $request->merge(['token' => $token]);
 
                 $request->merge(['idUser' => $userId]);
 //      ###################################################################################
                 return $next($request);
-//                return $next($request);
             } else {
                 echo " still not authenticated";
             }

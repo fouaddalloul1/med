@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string("name_en");
             $table->string("name_ar");
-            $table->string('image')->default("med");
+            $table->string('image')->default("NULL");
             $table->timestamps();
         });
     }

@@ -11,7 +11,7 @@ class Company extends Model
     use HasFactory;
 
     public function medicines(){
-        $this->hasMany(Medicine::class,'company_id','id');
+        return $this->hasMany(Medicine::class,'company_id','id');
     }
 
 }
