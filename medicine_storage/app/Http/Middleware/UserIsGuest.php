@@ -6,6 +6,7 @@ use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
@@ -72,7 +73,7 @@ class UserIsGuest
 //#################################################################################################
 
                 $token = $user->createToken('TokenName')->accessToken;
-
+                $encrypted_token = Crypt::encryptString($token);
                 // set request headers
                 $request->headers->set('token', 'Bearer ' . $token);
 
@@ -86,7 +87,7 @@ class UserIsGuest
 
                 $request->merge(['idUser'=>$userId]);
 
-                $request->merge(['token' => $token]);
+                $request->merge(['token' => $encrypted_token]);
 
 //      ###################################################################################
                 return $next($request);

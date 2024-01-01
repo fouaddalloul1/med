@@ -4,16 +4,7 @@ use App\Http\Controllers\Send\SendDataFromDB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
+
 
 Route::group(['middleware' => ['userIsGuest']], function () {
     //if user register successful will go to usr’s home page
@@ -51,8 +42,6 @@ Route::group(['middleware' => ['checkLanguage','userIsAuth']], function () {
     //favourite add and show
     Route::get('addToFavourite/{idOfUser}/{idMedicine}', [SendDataFromDB::class, 'addToFavourite']);
     Route::get('showFavourite/{idOfUser}', [SendDataFromDB::class, 'showFavourite']);
-//    Route::get('deleteFromFavourite/{idMedicine',[SendDataFromDB::class,'deleteFromFavouriteMedicine']);
-
-
+    Route::delete('deleteFromFavourite/{idOfUser}/{idMedicine}',[SendDataFromDB::class,'deleteFromFavouriteMedicine']);
 });
 

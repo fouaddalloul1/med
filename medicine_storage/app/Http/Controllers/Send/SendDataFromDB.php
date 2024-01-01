@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Send;
 
 use App\Http\Controllers\Controller;
+use App\Http\HelperFile\helper;
 use App\Models\Category;
 use App\Models\LinkFavMedicine;
 use App\Models\LinkMedicinesWithOrders;
@@ -13,54 +14,29 @@ use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Http\translateMessage\translate;
 
 class SendDataFromDB extends Controller
 {
+    use translate;
+    use helper;
+
     public function showHome(Request $request)
     {
 
-//        echo "this is id : " . $request->input('idUser');
+// If some rows in the column are empty, you can use the COALESCE() function to
+// replace the empty values with a default value.
 
-//        If some rows in the column are empty, you can use the COALESCE() function to replace the empty values with a default value.
-        //replace empty data in image column
-//        DB::table('medicines')
-//            ->select(DB::raw('COALESCE(image, "default_value") as image'))
-//            ->get();
-
-        $sevenMedicines = Medicine::select('medicines.quantity', 'medicines.price', 'endDate',
-            'trade_' . app()->getLocale() . ' as trade',
-            'scientific_' . app()->getLocale() . ' as scientific',
-            DB::raw("CASE WHEN '" . app()->getLocale() . "' = 'ar' THEN companies.name_ar
-            ELSE companies.name_en END as company_name"),
-            DB::raw("CASE WHEN '" . app()->getLocale() . "' = 'ar' THEN categories.name_ar
-            ELSE categories.name_en END as category_name"),
-            DB::raw('COALESCE(medicines.image, "default_value") image')
-        )
-            ->join('companies', 'medicines.company_id', '=', 'companies.id')
-            ->join('categories', 'medicines.category_id', '=', 'categories.id')
-            ->orderBy('medicines.created_at', 'desc')
-            ->take(7)
-            ->get();
-
-        //$sevenMedicines == null || !isset($sevenMedicines) --->this condition will give you true
-        // although $sevenMedicines is empty
-
-        //return response()->json($request->all());
+        $sevenMedicines = $this->getMedicines()->take(7);
 
         if (count($sevenMedicines) === 0 || $sevenMedicines->isEmpty()) {
-            return response()->json(['message' => 'I do not have medicines', $request->input('token')]);
+            $this->messageHome($request);
         }
 
         return response()->json([
             'sevenMedicines' => $sevenMedicines,
-            'request' => $request->all() // contains token, id, email of user
+            'user' => $request->all() // contains token in header,and body, id, email of user
         ]);
-
-//        or we can use
-//        $medicines = DB::table('medicines')
-//            ->latest('created_at')
-//            ->take(7)
-//            ->get();
 
     }
 
@@ -79,6 +55,9 @@ class SendDataFromDB extends Controller
 //        }
 
         $curUser = User::where('id', $id)->first();
+        if (is_null($curUser)) {
+            return $this->messageSetting();
+        }
         return response()->json([$curUser]);
     }
 
@@ -86,9 +65,7 @@ class SendDataFromDB extends Controller
     {
         $allCategories = Category::select('id', 'name_' . app()->getLocale() . ' as name')->get();
         if ($allCategories === 0 || $allCategories->isEmpty()) {
-            return response()->json([
-                'message' => 'I do not have categories'
-            ]);
+            return $this->messageShop();
         }
 
         return response()->json($allCategories);
@@ -97,84 +74,33 @@ class SendDataFromDB extends Controller
 //  her you can benefit from relationship between medicine ane category
     public function showMedicinesInThisCategory($nameOfCategory)
     {
+
         if (app()->getLocale() == 'en') {
             $cat = Category::where('name_en', $nameOfCategory)->first();
         } else {
             $cat = Category::where('name_ar', $nameOfCategory)->first();
         }
         if ($cat == null) {
-            return response()->json(['message' => 'this category is not found']);
+            return $this->messageCategoryIsNotFound();
         }
+
         $idOfThisCategory = $cat['id'];
         echo "id is : " . $idOfThisCategory;
         if ($idOfThisCategory) {
-            $medicinesInThisCategory = Medicine::where('category_id', $idOfThisCategory)
-                ->select('price', 'quantity', 'endDate',
-                    DB::raw('CASE WHEN "' . app()->getLocale() . '" = "en" THEN scientific_en ELSE scientific_ar END
-        AS scientific_name'),
-                    DB::raw('CASE WHEN "' . app()->getLocale() . '" = "en" THEN trade_en ELSE trade_ar END
-        AS trade_name'),
-                    DB::raw("CASE WHEN '" . app()->getLocale() . "' = 'ar' THEN companies.name_ar
-            ELSE companies.name_en END as company_name"),
-                    DB::raw("CASE WHEN '" . app()->getLocale() . "' = 'ar' THEN categories.name_ar
-        ELSE categories.name_en END as category_name")
-                )->join('companies', 'medicines.company_id', '=', 'companies.id')
-                ->join('categories', 'medicines.category_id', '=', 'categories.id')
-                ->get();
+            $medicinesInThisCategory = $this->MedicinesInthisCategory($idOfThisCategory);
         }
-//        $medicinesInThisCategory = Medicine::where('category_id',$idOfThisCategory)->get();
 
-//
         if ($medicinesInThisCategory == '[]' || count($medicinesInThisCategory) === 0 || $medicinesInThisCategory == null || count($medicinesInThisCategory) == 0)
-            return response()->json(['message' => 'this category is empty']);
-
+            return $this->messageShowMedicinesInThisCategory();
         return response()->json([$medicinesInThisCategory]);
     }
 
     public function detailsSpecificMedicine($nameOfMedicine)
     {
-        if (app()->getLocale() == 'en') {
-            $med = Medicine::where('trade_en', $nameOfMedicine)
-                ->join('companies', 'medicines.company_id', '=', 'companies.id')
-                ->join('categories', 'medicines.category_id', '=', 'categories.id')
-                ->select('medicines.scientific_en', 'medicines.trade_en',
-                    'medicines.price', 'medicines.endDate',
-                    'companies.name_' . app()->getLocale() . ' as company_name',
-                    'categories.name_' . app()->getLocale() . ' as category_name')
-                ->first();
-
-            if ($med === 0 || $med == '[]')
-                $med = Medicine::where('scientific_en', $nameOfMedicine)
-                    ->join('companies', 'medicines.company_id', '=', 'companies.id')
-                    ->join('categories', 'medicines.category_id', '=', 'categories.id')
-                    ->select('medicines.scientific_en', 'medicines.trade_en',
-                        'medicines.price', 'medicines.endDate',
-                        'companies.name_' . app()->getLocale() . ' as company_name',
-                        'categories.name_' . app()->getLocale() . ' as category_name')
-                    ->first();
-        } else {
-            $med = Medicine::where('scientific_ar', $nameOfMedicine)
-                ->join('companies', 'medicines.company_id', '=', 'companies.id')
-                ->join('categories', 'medicines.category_id', '=', 'categories.id')
-                ->select('medicines.scientific_ar', 'medicines.trade_ar',
-                    'medicines.price', 'medicines.endDate',
-                    'companies.name_' . app()->getLocale() . ' as company_name',
-                    'categories.name_' . app()->getLocale() . ' as category_name')
-                ->first();
-
-            if ($med === 0 || $med == '[]')
-                $med = Medicine::where('trade_ar', $nameOfMedicine)
-                    ->join('companies', 'medicines.company_id', '=', 'companies.id')
-                    ->join('categories', 'medicines.category_id', '=', 'categories.id')
-                    ->select('medicines.scientific_ar', 'medicines.trade_ar',
-                        'medicines.price', 'medicines.endDate',
-                        'companies.name_' . app()->getLocale() . ' as company_name',
-                        'categories.name_' . app()->getLocale() . ' as category_name')
-                    ->first();
-        }
+        $med = $this->DetailsOfMedicine($nameOfMedicine);
 
         if ($med == null || $med == '[]')
-            return response()->json(['message' => 'I can not show details of this medicine']);
+            return $this->messageDetailsSpecificMedicine();
 
         return response()->json([$med]);
 
@@ -184,23 +110,19 @@ class SendDataFromDB extends Controller
     public function showFavourite($idOfUser)
     {
 
-        if ($idOfUser == null)
-            return response()->json(['message' => 'id of user is null']);
         $user = User::find($idOfUser);
 
         if ($user == null || $user == '[]') {
-            return response()->json(['message' => 'I do not find this user ']);
+            return $this->messageCheckUser();
         }
         //ids of linkFavMedicine
         $favoriteMedicines = $user->medicines;
 
         if ($favoriteMedicines == null || $favoriteMedicines == '[]')
-            return response()->json(['message' => 'this user do not have favourite user']);
+            return $this->messageShowFavourite();
 
         $medicineIds = $favoriteMedicines->pluck('medicine_id');
-        if ($medicineIds)
-            $medicines = Medicine::whereIn('id', $medicineIds)->get();
-
+        $medicines = $this->FavMedicines($medicineIds);
         if ($medicines == null)
             return response()->json(['message' => 'medicine array is null']);
         return response()->json($medicines);
@@ -209,13 +131,26 @@ class SendDataFromDB extends Controller
     public function addToFavourite($idOfUser, $idMedicine)
     {
         $linkFavMedicine = new LinkFavMedicine;
+        $temp = LinkFavMedicine::where('user_id', $idOfUser)
+            ->where('medicine_id', $idMedicine)->first();
+        if ($temp && $temp != null && $temp != '[null]') {
+            return $this->messageMedicineIsExisted();
+        }
+
         $linkFavMedicine->user_id = $idOfUser;
         $linkFavMedicine->medicine_id = $idMedicine;
         $linkFavMedicine->save();
 
-        return response()->json(['message' => 'the medicine is added to favourite successfully']);
+        return $this->messageAddToFavourite();
     }
 
+    public function deleteFromFavouriteMedicine($idOfUser, $idMedicine)
+    {
+        LinkFavMedicine::where('user_id', $idOfUser)
+            ->where('medicine_id', $idMedicine)
+            ->delete();
+        return $this->messageDeleteFromFavouriteMedicine();
+    }
 
     public function addCartToOrders(Request $request, $idOfUser)
     {
@@ -250,7 +185,7 @@ class SendDataFromDB extends Controller
             $link->order_id = $order->id;
             echo "id of order: " . $order->id;
             echo "\n";
-            //I receive name of medicine so I must find id of this medicine id
+            //I receive name of medicine ,so I must find id of this medicine id
             $id_medicine = Medicine::where('trade_en', $medicine['name'])->first();
             if ($id_medicine)
                 $link->medicine_id = $id_medicine->id;
@@ -299,14 +234,18 @@ class SendDataFromDB extends Controller
     {
         echo "id :" . $userId;
 
-        if (!$userId)
-            return response()->json(['message' => 'not found this user with this id']);
-
+        if (!$userId) {
+            return response()->json(['message' => 'null id']);
+        }
         $user = User::find($userId);
+        if (!$user)
+            return $this->messageCheckUser();
 
 //      using the relationship : get all orders(table orders) for this user
 //        $orders = [];
         $orders = $user->orders;
+
+        //$orders contain ids in column id in table orders
 
         $ids = [];
         $i = 0;
@@ -315,59 +254,67 @@ class SendDataFromDB extends Controller
             $i++;
         }
 
+        //yourOrders just contains ids of medicine I must get the names
         $yourOrders = LinkMedicinesWithOrders::whereIn('order_id', $ids)->get();
 
-        if ($yourOrders != null && $yourOrders != '[]') {
-            return response()->json([$orders, $yourOrders]);
+        $idsMed = [];
+        $i = 0;
+        foreach ($yourOrders as $you) {
+            $idsMed[$i] = $you['medicine_id'];
+            $i++;
         }
+        $unique_ids_med = array_unique($idsMed);
+        //print_r($idsMed);
+        $namesOfMedicines = $this->GetOrders($unique_ids_med);
 
-        return response()->json(['message' => 'this user do not have orders']);
+
+        if ($yourOrders != null && $yourOrders != '[]') {
+            echo "orders , LinkMedWOr, then med";
+            echo "\n";
+            return response()->json([$orders, $yourOrders, $namesOfMedicines]);//$namesOfMedicines
+        }
+        return $this->messageShowOrders();
     }
-
 
     public function search(Request $request)
     {
         $input = $request->input('input');
 
         // Check if the input is a category name
-        if (app()->getLocale() == 'en')
-            $category = Category::where('name_en', 'like', "%$input%")->get();
-        else
-            $category = Category::where('name_ar', 'like', "%$input%")->get();
+        if (app()->getLocale() == 'en') {
+            $category = Category::where('name_en', 'like', "%$input%")
+                ->select('id', 'name_en', 'image', 'created_at', 'updated_at')
+                ->get();//->first(); instead of select and get
+
+//            if ($category != null)
+//                $name = $category['name_en'];
+//            else
+//                return $this->messageCategoryIsNotFound();
+        } else {
+            $category = Category::where('name_ar', 'like', "%$input%")
+                ->select('id', 'name_ar', 'image', 'created_at', 'updated_at')
+                ->get();
+//            if ($category != null)
+//                $name = $category['name_ar'];
+//            else
+//                return $this->messageCategoryIsNotFound();
+        }
 
         if ($category != null && $category != '[]') {
             echo "cat here";
             echo "\n";
-            /*
-            // If the input is a category name, get all medicines in that category
-            if (app()->getLocale() == 'en')
-                $medicines = $category->medicines->select('trade_en', 'scientific_en', 'price');
-            else
-                $medicines = $category->medicines->select('trade_ar', 'scientific_ar', 'price');
-            */
             return response()->json([$category]);
+            //this return medicines for the **first** category
+            //return response()->json([$this->showMedicinesInThisCategory($name)]);
         } else {
             // If the input is a medicine name, search for that medicine
-            if (app()->getLocale() == 'en') {
-                //user enter trade name in en language
-                $medicines = Medicine::where('trade_en', 'like', "%$input%")->get();
-                if (!$medicines || $medicines == '[]') {
-                    //user enter scientific name in en language
-                    $medicines = Medicine::where('scientific_en', 'like', "%$input%")->get();
-                }
-            } else {
-                //user enter trade name in ar language
-                $medicines = Medicine::where('trade_ar', 'like' , "%$input%")->get();
-                if (!$medicines || $medicines == '[]') {
-                    //user enter scientific name in en language
-                    $medicines = Medicine::where('scientific_ar', 'like', "%$input%")->get();
-                }
+            $medicines = $this->SearchNameOfMed($input);
+
+            if ($medicines != null && $medicines != '[]') {
+                return response()->json($medicines);
             }
+            return $this->messageSearch();
         }
-        if ($medicines) {
-            return response()->json($medicines);
-        }
-        return response()->json(['message' => 'not found']);
     }
 
     public function Logout()

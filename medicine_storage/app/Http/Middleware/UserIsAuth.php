@@ -6,6 +6,7 @@ use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,19 +25,13 @@ class UserIsAuth
         if($request->hasHeader('token')){
             $request = Request::capture();
             $token = $request->header('token');
+            $jsonStr = Crypt::decryptString($token);
+            $jsonPayload = json_decode($jsonStr, true);
+           // echo "id of user".$jsonPayload["tokenable_id"];
 
-            try {
-                $jsonStr = base64_decode($token);
-                $jsonPayload = json_decode($jsonStr, true);
-                if (!$jsonPayload)
-                    return response()->json(['message' => 'null token']);
-                if (!isset($jsonPayload['id'])) {
-                    return response()->json(['message' => 'token does not have id']);
-                }
+            ///return response()->json(["data:"=>$jsonPayload]);
+            //            $token = Crypt::decryptString($token);
 
-            }catch (\Exception $exception){
-                return response()->json(['message'=>'found error']);
-            }
             return $next($request);
         }
 
@@ -98,23 +93,27 @@ class UserIsAuth
 //#################################################################################################
 
                 $token = $currentUser->createToken('Token_name')->accessToken;
+                $encrypted_token = Crypt::encryptString($token);
+
+
 //                echo "token : ".$token;
                 echo "\n";
                 // set request headers
                 $request->headers->set('token', 'Bearer ' . $token);
 
+//
 //                 authenticate user using token
                 $currentUser = auth()->user();
-//
                 // get user ID
                 $userId = $currentUser->id;
 //                echo "user id :" . $userId;
 
 //                echo "header of request : ". $request->header('token');
 //                echo "\n";
-//                $request->merge(['token' => $token]);
-
                 $request->merge(['idUser' => $userId]);
+
+                $request->merge(['token' => $encrypted_token]);
+
 //      ###################################################################################
                 return $next($request);
             } else {
